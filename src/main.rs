@@ -114,7 +114,6 @@ impl std::clone::Clone for int_inf
 impl std::ops::Add for int_inf
 {
     type Output = Self;
-
     fn add(self, other: Self) -> Self
     {
         let mut result = Self
@@ -123,7 +122,7 @@ impl std::ops::Add for int_inf
             negative: false,
         };
 
-        if (!self.negative && !other.negative) || (self.negative && other.negative)
+        if (!self.negative && !other.negative) || (self.negative && other.negative) // Both positive or both negative
         {
             let mut carry: bool = false;
             let num_str_1 = self.to_string();
@@ -169,112 +168,40 @@ impl std::ops::Add for int_inf
 
             result.digits.reverse();
 
-            if self.negative && other.negative
+            if self.negative && other.negative  // Sets negative flag to true if both are negative
             {
                 result.negative = true;
             }
 
             return result;
         }
-    else
-    {
-        let mut num_str_1 = self.to_string();
-        let mut num_str_2 = other.to_string();
-        let mut num_str_1_chars = num_str_1.chars();
-        let mut num_str_2_chars = num_str_2.chars();
-        let max_index = num_str_1.len().max(num_str_2.len());
-
-        if self.negative
+        else    // Only one addend is negative
         {
-            num_str_1_chars.next();
-        }
-        else
-        {
-            num_str_2_chars.next();
-        }
-
-        for index in 0..max_index
-        {
-            let mut digit_1 = 0u8;
-            let mut digit_2 = 0u8;
-
-            if let Some(ch) = num_str_1_chars.next_back()
-            {
-                digit_1 = ch.to_digit(10).unwrap() as u8;
-            }
-
-            if let Some(ch) = num_str_2_chars.next_back()
-            {
-                digit_2 = ch.to_digit(10).unwrap() as u8;
-            }
-
-            if digit_1 > digit_2
-            {
-                result.negative = self.negative;
-                break;
-            }
-            else if digit_2 > digit_1
-            {
-                result.negative = other.negative;
-                break;
-            }
-        }
-
-        if result.negative
-        {
-            let mut num_str_1 = self.to_string();
-            let mut num_str_2 = other.to_string();
-            let mut num_str_1_chars = num_str_1.chars();
-            let mut num_str_2_chars = num_str_2.chars();
-            let max_index = num_str_1.len().max(num_str_2.len());
-
             if self.negative
             {
-                num_str_1_chars.next();
+                return other - self;
             }
             else
             {
-                num_str_2_chars.next();
-            }
-
-            for index in 0..max_index
-            {
-                let mut digit_1 = 0u8;
-                let mut digit_2 = 0u8;
-
-                if let Some(ch) = num_str_1_chars.next_back()
-                {
-                    digit_1 = ch.to_digit(10).unwrap() as u8;
-                }
-
-                if let Some(ch) = num_str_2_chars.next_back()
-                {
-                    digit_2 = ch.to_digit(10).unwrap() as u8;
-                }
-
-                if digit_1 > digit_2
-                {
-                    result.digits.push(DigitBits::new(digit_1 - digit_2));
-                }
-                else if digit_2 > digit_1
-                {
-                    result.digits.push(DigitBits::new(digit_2 - digit_1));
-                }
-                else
-                {
-                    result.digits.push(DigitBits::new(0));
-                }
-
-                if index == max_index - 1
-                {
-                    result.digits.reverse();
-                }
+                return self - other;
             }
         }
-        return result;
     }
 }
+
+impl std::ops::Sub for int_inf
+{
+    type Output = Self;
+    fn sub(self, other: Self) -> Self
+    {
+        let mut result = Self
+        {
+            digits: Vec::new(),
+            negative: false,
+        }
+    }
 }
+
 
 fn main()
 {
